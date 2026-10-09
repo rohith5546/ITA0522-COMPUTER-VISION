@@ -1,0 +1,86 @@
+
+!pip -q install opencv-python-headless
+
+from google.colab import files
+from IPython.display import Video, display
+import cv2
+import subprocess
+import os
+
+# Step 1: Upload a video
+uploaded = files.upload()
+
+if not uploaded:
+    raise ValueError("Please upload a video file.")
+
+video_name = next(iter(uploaded))
+print("Uploaded video:", video_name)
+
+# Step 2: Check whether OpenCV can read the video
+cap = cv2.VideoCapture(video_name)
+
+if not cap.isOpened():
+    raise ValueError(
+        "Cannot open video. Try uploading an MP4 video."
+    )
+
+fps = cap.get(cv2.CAP_PROP_FPS)
+width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+cap.release()
+
+if fps <= 0 or width <= 0 or height <= 0:
+    raise ValueError("Invalid video information.")
+
+print("Original FPS:", fps)
+print("Resolution:", width, "x", height)
+print("Total frames:", frame_count)
+print("Duration:", round(frame_count / fps, 2), "seconds")
+
+# Step 3: Check FFmpeg availability
+subprocess.run(
+    ["ffmpeg", "-version"],
+    check=True,
+    stdout=subprocess.DEVNULL
+)
+
+# Step 4: Create slow-motion video (0.5x speed)
+subprocess.run([
+    "ffmpeg", "-y", "-i", video_name,
+    "-vf", "setpts=2.0*PTS",
+    "-an",
+    "-c:v", "libx264",
+    "-pix_fmt", "yuv420p",
+    "-movflags", "+faststart",
+    "slow_motion.mp4"
+], check=True)
+
+# Step 5: Create fast-motion video (2x speed)
+subprocess.run([
+    "ffmpeg", "-y", "-i", video_name,
+    "-vf", "setpts=0.5*PTS",
+    "-an",
+    "-c:v", "libx264",
+    "-pix_fmt", "yuv420p",
+    "-movflags", "+faststart",
+    "fast_motion.mp4"
+], check=True)
+
+# Step 6: Display original video
+print("ORIGINAL VIDEO")
+display(Video(video_name, embed=True))
+
+# Step 7: Display slow-motion video
+print("SLOW MOTION - 0.5x SPEED")
+display(Video("slow_motion.mp4", embed=True))
+
+# Step 8: Display fast-motion video
+print("FAST MOTION - 2x SPEED")
+display(Video("fast_motion.mp4", embed=True))
+
+# Step 9: Download processed videos
+print("Download the processed videos:")
+files.download("slow_motion.mp4")
+files.download("fast_motion.mp4")
