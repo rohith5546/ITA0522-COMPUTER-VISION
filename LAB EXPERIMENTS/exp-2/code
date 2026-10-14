@@ -1,0 +1,35 @@
+!pip install opencv-python-headless matplotlib
+
+from google.colab import files
+import cv2
+import matplotlib.pyplot as plt
+
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+img = cv2.imread(filename)
+
+if img is None:
+    raise ValueError("Unable to read the uploaded image.")
+
+# Convert BGR to RGB for correct Matplotlib display
+img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+print("Image loaded successfully:", filename)
+print("Image dimensions:", img.shape)
+
+# Gaussian Blur
+blur_img = cv2.GaussianBlur(img, (15, 15), 0)
+plt.figure(figsize=(10, 5))
+plt.subplot(1, 2, 1)
+plt.imshow(img_rgb)
+plt.title("Original Image")
+plt.axis("off")
+plt.subplot(1, 2, 2)
+plt.imshow(cv2.cvtColor(blur_img, cv2.COLOR_BGR2RGB))
+plt.title("Gaussian Blur")
+plt.axis("off")
+plt.show()
+
+cv2.imwrite("blur_image.jpg", blur_img)
+print("Gaussian blur applied successfully!")
