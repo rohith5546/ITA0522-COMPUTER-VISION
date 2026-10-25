@@ -1,0 +1,23 @@
+
+import cv2
+import numpy as np
+
+img = cv2.imread("image.jpg")
+
+if img is None:
+    print("Error: Cannot open image file")
+    exit()
+
+print("Image loaded successfully!")
+
+kernel = np.ones((5, 5), np.uint8)
+
+dilated_img = cv2.dilate(img, kernel, iterations=1)
+
+print("Image dilation completed!")
+
+cv2.imshow("Original Image", img)
+cv2.imshow("Dilated Image", dilated_img)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
