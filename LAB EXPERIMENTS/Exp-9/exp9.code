@@ -1,0 +1,37 @@
+
+import cv2
+
+# Read the original image
+img = cv2.imread("image.jpg")
+
+# Check if the image was loaded
+if img is None:
+    print("Error: Cannot open image file")
+    exit()
+
+# Get original image dimensions
+height, width = img.shape[:2]
+print("Original image size:", width, "x", height)
+
+# Resize to a bigger image (2 times)
+big_img = cv2.resize(
+    img, None, fx=2, fy=2,
+    interpolation=cv2.INTER_LINEAR
+)
+
+# Resize to a smaller image (half size)
+small_img = cv2.resize(
+    img, None, fx=0.5, fy=0.5,
+    interpolation=cv2.INTER_AREA
+)
+
+# Display all images
+cv2.imshow("Original Image", img)
+cv2.imshow("Bigger Image", big_img)
+cv2.imshow("Smaller Image", small_img)
+
+print("Image scaling completed successfully!")
+print("Press any key to close the windows.")
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
