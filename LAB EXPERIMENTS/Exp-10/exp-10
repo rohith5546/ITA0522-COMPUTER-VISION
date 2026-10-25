@@ -1,0 +1,25 @@
+
+import cv2
+
+# Read the original image
+img = cv2.imread("image.jpg")
+
+# Check if the image was loaded
+if img is None:
+    print("Error: Cannot open image file")
+    exit()
+
+# Rotate the image 90 degrees clockwise
+rotated_img = cv2.rotate(
+    img, cv2.ROTATE_90_CLOCKWISE
+)
+
+# Display the original and rotated images
+cv2.imshow("Original Image", img)
+cv2.imshow("Rotated Image - 90 Degrees Clockwise", rotated_img)
+
+print("Image rotated 90 degrees clockwise successfully!")
+print("Press any key to close the windows.")
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
