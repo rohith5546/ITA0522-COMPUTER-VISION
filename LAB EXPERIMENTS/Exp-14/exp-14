@@ -1,0 +1,53 @@
+
+import cv2
+import numpy as np
+
+# Read the original image
+img = cv2.imread("image.jpg")
+
+if img is None:
+    print("Error: Cannot open image file")
+    exit()
+
+height, width = img.shape[:2]
+
+# Select four corner points in the original image
+src_points = np.float32([
+    [0, 0],
+    [width - 1, 0],
+    [width - 1, height - 1],
+    [0, height - 1]
+])
+
+# Define destination points for perspective transformation
+dst_points = np.float32([
+    [width * 0.15, height * 0.10],
+    [width * 0.85, height * 0.10],
+    [width * 0.95, height * 0.90],
+    [width * 0.05, height * 0.90]
+])
+
+# Calculate the perspective transformation matrix
+matrix = cv2.getPerspectiveTransform(src_points, dst_points)
+
+# Apply perspective transformation
+transformed_img = cv2.warpPerspective(
+    img, matrix, (width, height)
+)
+
+# Create small display windows
+cv2.namedWindow("Original Image", cv2.WINDOW_NORMAL)
+cv2.namedWindow("Perspective Transformed Image", cv2.WINDOW_NORMAL)
+
+cv2.resizeWindow("Original Image", 400, 300)
+cv2.resizeWindow("Perspective Transformed Image", 400, 300)
+
+# Display images
+cv2.imshow("Original Image", img)
+cv2.imshow("Perspective Transformed Image", transformed_img)
+
+print("Perspective transformation completed successfully!")
+print("Press any key to close the windows.")
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
