@@ -1,0 +1,32 @@
+
+import cv2
+
+# Read the original image
+img = cv2.imread("image.jpg")
+
+if img is None:
+    print("Error: Cannot open image file")
+    exit()
+
+# Rotate image 270 degrees clockwise
+rotated_img = cv2.rotate(
+    img, cv2.ROTATE_90_COUNTERCLOCKWISE
+)
+
+# Create small display windows
+cv2.namedWindow("Original Image", cv2.WINDOW_NORMAL)
+cv2.namedWindow("270 Degree Clockwise Rotation", cv2.WINDOW_NORMAL)
+
+# Set window sizes
+cv2.resizeWindow("Original Image", 400, 300)
+cv2.resizeWindow("270 Degree Clockwise Rotation", 400, 300)
+
+# Display images
+cv2.imshow("Original Image", img)
+cv2.imshow("270 Degree Clockwise Rotation", rotated_img)
+
+print("Image rotated 270 degrees clockwise successfully!")
+print("Press any key to close the windows.")
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
