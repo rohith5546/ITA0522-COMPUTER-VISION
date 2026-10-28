@@ -1,0 +1,49 @@
+
+import cv2
+
+# Read the original image
+img = cv2.imread("image.jpg")
+
+if img is None:
+    print("Error: Cannot open image file")
+    exit()
+
+height, width = img.shape[:2]
+
+# Define ROI dimensions
+roi_w = max(1, width // 4)
+roi_h = max(1, height // 4)
+
+# Select ROI from the top-left corner
+x1, y1 = 0, 0
+x2, y2 = roi_w, roi_h
+
+# Crop and copy the ROI
+roi = img[y1:y2, x1:x2].copy()
+
+# Create a copy of the original image
+result = img.copy()
+
+# Paste ROI into the bottom-right corner
+paste_x = width - roi_w
+paste_y = height - roi_h
+
+result[paste_y:paste_y + roi_h,
+       paste_x:paste_x + roi_w] = roi
+
+# Display small windows
+cv2.namedWindow("Original Image", cv2.WINDOW_NORMAL)
+cv2.namedWindow("ROI Copy and Paste", cv2.WINDOW_NORMAL)
+cv2.resizeWindow("Original Image", 400, 300)
+cv2.resizeWindow("ROI Copy and Paste", 400, 300)
+
+cv2.imshow("Original Image", img)
+cv2.imshow("ROI Copy and Paste", result)
+
+cv2.imwrite("roi_result.jpg", result)
+
+print("ROI cropping, copying and pasting completed!")
+print("Saved as roi_result.jpg")
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
