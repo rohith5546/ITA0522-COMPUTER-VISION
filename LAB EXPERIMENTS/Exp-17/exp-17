@@ -1,0 +1,46 @@
+
+import cv2
+
+# Read the original image
+img = cv2.imread("image.jpg")
+
+if img is None:
+    print("Error: Cannot open image file")
+    exit()
+
+# Create a copy of the original image
+watermarked = img.copy()
+
+# Watermark text
+text = "CV LAB"
+
+# Get image dimensions
+height, width = img.shape[:2]
+
+# Set watermark position
+position = (max(10, width - 180), max(30, height - 20))
+
+# Insert watermark
+cv2.putText(
+    watermarked, text, position,
+    cv2.FONT_HERSHEY_SIMPLEX, 1,
+    (0, 0, 255), 2, cv2.LINE_AA
+)
+
+# Display small windows
+cv2.namedWindow("Original Image", cv2.WINDOW_NORMAL)
+cv2.namedWindow("Watermarked Image", cv2.WINDOW_NORMAL)
+cv2.resizeWindow("Original Image", 400, 300)
+cv2.resizeWindow("Watermarked Image", 400, 300)
+
+cv2.imshow("Original Image", img)
+cv2.imshow("Watermarked Image", watermarked)
+
+# Save the watermarked image
+cv2.imwrite("watermarked_image.jpg", watermarked)
+
+print("Watermark inserted successfully!")
+print("Saved as watermarked_image.jpg")
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
