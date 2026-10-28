@@ -1,0 +1,51 @@
+
+import cv2
+import numpy as np
+
+# Read the original image
+img = cv2.imread("image.jpg")
+
+if img is None:
+    print("Error: Cannot open image file")
+    exit()
+
+# Convert the image to grayscale
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Convert grayscale image to float32
+gray = np.float32(gray)
+
+# Apply Harris Corner Detection
+corners = cv2.cornerHarris(
+    gray,
+    blockSize=2,
+    ksize=3,
+    k=0.04
+)
+
+# Dilate corner points to make them more visible
+corners = cv2.dilate(corners, None)
+
+# Copy original image for displaying detected corners
+result = img.copy()
+
+# Mark detected corners in red
+result[corners > 0.01 * corners.max()] = [0, 0, 255]
+
+# Create small display windows
+cv2.namedWindow("Original Image", cv2.WINDOW_NORMAL)
+cv2.namedWindow("Harris Corners", cv2.WINDOW_NORMAL)
+
+cv2.resizeWindow("Original Image", 400, 300)
+cv2.resizeWindow("Harris Corners", 400, 300)
+
+# Display images
+cv2.imshow("Original Image", img)
+cv2.imshow("Harris Corners", result)
+
+print("Harris Corner Detection completed successfully!")
+print("Detected corner points are marked in red.")
+print("Press any key to close the windows.")
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
