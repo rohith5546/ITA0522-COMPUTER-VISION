@@ -1,0 +1,45 @@
+
+import cv2
+
+# Load original image
+img = cv2.imread("image.jpg")
+
+if img is None:
+    print("Image not found")
+    exit()
+
+# Convert image to grayscale
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Apply threshold
+_, binary = cv2.threshold(
+    gray, 127, 255, cv2.THRESH_BINARY
+)
+
+# Create kernel
+kernel = cv2.getStructuringElement(
+    cv2.MORPH_RECT, (5, 5)
+)
+
+# Apply Opening operation
+opening = cv2.morphologyEx(
+    binary, cv2.MORPH_OPEN, kernel
+)
+
+# Resize images
+small_original = cv2.resize(img, (600, 400))
+small_output = cv2.resize(opening, (600, 400))
+
+# Create smaller windows
+cv2.namedWindow("Original Image", cv2.WINDOW_NORMAL)
+cv2.namedWindow("Opening Operation", cv2.WINDOW_NORMAL)
+
+cv2.resizeWindow("Original Image", 600, 400)
+cv2.resizeWindow("Opening Operation", 600, 400)
+
+# Display images
+cv2.imshow("Original Image", small_original)
+cv2.imshow("Opening Operation", small_output)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
