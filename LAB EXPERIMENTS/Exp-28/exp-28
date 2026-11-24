@@ -1,0 +1,105 @@
+
+import cv2
+import os
+
+# Get the folder containing this Python file
+folder = os.path.dirname(os.path.abspath(__file__))
+
+# Read input video
+video_path = os.path.join(folder, "video.mp4")
+
+cap = cv2.VideoCapture(video_path)
+
+if not cap.isOpened():
+    print("Video not found!")
+    exit()
+
+# Create background subtractor
+background = cv2.createBackgroundSubtractorMOG2(
+    history=500,
+    varThreshold=50,
+    detectShadows=False
+)
+
+# Create fixed-size output window
+cv2.namedWindow(
+    "Vehicle Detection", cv2.WINDOW_NORMAL
+)
+
+cv2.resizeWindow(
+    "Vehicle Detection", 640, 360
+)
+
+while True:
+    ret, frame = cap.read()
+
+    if not ret:
+        break
+
+    # Apply background subtraction
+    mask = background.apply(frame)
+
+    # Create morphological kernel
+    kernel = cv2.getStructuringElement(
+        cv2.MORPH_RECT, (5, 5)
+    )
+
+    # Remove noise
+    mask = cv2.morphologyEx(
+        mask, cv2.MORPH_OPEN, kernel
+    )
+
+    # Improve detected foreground regions
+    mask = cv2.dilate(
+        mask, kernel, iterations=2
+    )
+
+    # Find contours
+    contours, _ = cv2.findContours(
+        mask,
+        cv2.RETR_EXTERNAL,
+        cv2.CHAIN_APPROX_SIMPLE
+    )
+
+    # Detect moving objects
+    for contour in contours:
+        area = cv2.contourArea(contour)
+
+        if area > 1500:
+            x, y, w, h = cv2.boundingRect(contour)
+
+            # Draw rectangle
+            cv2.rectangle(
+                frame,
+                (x, y),
+                (x + w, y + h),
+                (0, 255, 0),
+                2
+            )
+
+            # Display label
+            cv2.putText(
+                frame,
+                "Vehicle",
+                (x, y - 10),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.6,
+                (0, 255, 0),
+                2
+            )
+
+    # Resize frame for screenshot
+    small_frame = cv2.resize(
+        frame, (640, 360)
+    )
+
+    cv2.imshow(
+        "Vehicle Detection", small_frame
+    )
+
+    # Press Q to exit
+    if cv2.waitKey(30) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
