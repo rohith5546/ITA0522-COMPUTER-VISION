@@ -1,1 +1,60 @@
 
+
+import cv2
+import numpy as np
+
+# Read the original colour image
+img = cv2.imread("image.jpg")
+
+if img is None:
+    print("Image not found!")
+    exit()
+
+# Convert colour image to grayscale for processing
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Create morphological kernel
+kernel = np.ones((5, 5), np.uint8)
+
+# Apply Top Hat operation
+tophat = cv2.morphologyEx(
+    gray, cv2.MORPH_TOPHAT, kernel
+)
+
+# Convert Top Hat output to colour format
+tophat_color = cv2.cvtColor(
+    tophat, cv2.COLOR_GRAY2BGR
+)
+
+# Resize images for screenshot
+display_width = 500
+display_height = 350
+
+small_original = cv2.resize(
+    img, (display_width, display_height)
+)
+
+small_output = cv2.resize(
+    tophat_color, (display_width, display_height)
+)
+
+# Create fixed-size windows
+cv2.namedWindow("Original Colour Image", cv2.WINDOW_NORMAL)
+cv2.namedWindow("Top Hat Output", cv2.WINDOW_NORMAL)
+
+cv2.resizeWindow(
+    "Original Colour Image",
+    display_width, display_height
+)
+
+cv2.resizeWindow(
+    "Top Hat Output",
+    display_width, display_height
+)
+
+# Display images
+cv2.imshow("Original Colour Image", small_original)
+cv2.imshow("Top Hat Output", small_output)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
