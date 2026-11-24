@@ -1,0 +1,49 @@
+
+import cv2
+import numpy as np
+
+# Read the input image
+img = cv2.imread("image.jpg", 0)
+
+if img is None:
+    print("Image not found!")
+    exit()
+
+# Create a morphological kernel
+kernel = np.ones((5, 5), np.uint8)
+
+# Apply Closing operation
+closing = cv2.morphologyEx(
+    img, cv2.MORPH_CLOSE, kernel
+)
+
+# Resize images for screenshot
+display_width = 500
+display_height = 350
+
+small_original = cv2.resize(
+    img, (display_width, display_height)
+)
+
+small_output = cv2.resize(
+    closing, (display_width, display_height)
+)
+
+# Create fixed-size windows
+cv2.namedWindow("Original Image", cv2.WINDOW_NORMAL)
+cv2.namedWindow("Closing Operation", cv2.WINDOW_NORMAL)
+
+cv2.resizeWindow(
+    "Original Image", display_width, display_height
+)
+
+cv2.resizeWindow(
+    "Closing Operation", display_width, display_height
+)
+
+# Display images
+cv2.imshow("Original Image", small_original)
+cv2.imshow("Closing Operation", small_output)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
