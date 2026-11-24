@@ -1,0 +1,83 @@
+
+import cv2
+
+# Read reference watch and input scene images
+watch = cv2.imread("watch.jpg")
+scene = cv2.imread("image.jpg")
+
+if watch is None or scene is None:
+    print("Image not found!")
+    exit()
+
+# Convert images to grayscale
+gray_watch = cv2.cvtColor(
+    watch, cv2.COLOR_BGR2GRAY
+)
+
+gray_scene = cv2.cvtColor(
+    scene, cv2.COLOR_BGR2GRAY
+)
+
+# Create ORB detector
+orb = cv2.ORB_create(nfeatures=1000)
+
+# Detect keypoints and descriptors
+kp1, des1 = orb.detectAndCompute(
+    gray_watch, None
+)
+
+kp2, des2 = orb.detectAndCompute(
+    gray_scene, None
+)
+
+if des1 is None or des2 is None:
+    print("No features detected!")
+    exit()
+
+# Match features using Brute Force Matcher
+matcher = cv2.BFMatcher(
+    cv2.NORM_HAMMING, crossCheck=True
+)
+
+matches = matcher.match(des1, des2)
+
+# Sort matches by distance
+matches = sorted(
+    matches, key=lambda x: x.distance
+)
+
+# Select good matches
+good_matches = [
+    m for m in matches if m.distance < 60
+]
+
+# Draw feature matches
+result = cv2.drawMatches(
+    watch, kp1,
+    scene, kp2,
+    good_matches[:30],
+    None,
+    flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS
+)
+
+# Display recognition result
+if len(good_matches) >= 10:
+    print("Watch recognized!")
+else:
+    print("Watch not recognized!")
+
+# Resize output for screenshot
+result = cv2.resize(result, (700, 450))
+
+cv2.namedWindow(
+    "Watch Recognition", cv2.WINDOW_NORMAL
+)
+
+cv2.resizeWindow(
+    "Watch Recognition", 700, 450
+)
+
+cv2.imshow("Watch Recognition", result)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
