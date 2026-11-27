@@ -1,0 +1,27 @@
+
+import cv2
+
+def segmentation():
+    img = cv2.imread("image.jpg")
+
+    if img is None:
+        print("Image not found!")
+        return
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    lower = int(input("Enter lower threshold (0-255): "))
+    upper = int(input("Enter upper threshold (0-255): "))
+
+    result = cv2.inRange(gray, lower, upper)
+
+    small_original = cv2.resize(img, (400, 300))
+    small_result = cv2.resize(result, (400, 300))
+
+    cv2.imshow("Original Image", small_original)
+    cv2.imshow("Segmented Image", small_result)
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+segmentation()
