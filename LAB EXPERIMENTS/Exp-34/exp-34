@@ -1,0 +1,28 @@
+
+import cv2
+import numpy as np
+
+def draw_circle():
+    height = int(input("Enter image height: "))
+    width = int(input("Enter image width: "))
+
+    img = np.ones((height, width, 3), dtype=np.uint8) * 255
+
+    center = (width // 2, height // 2)
+    radius = min(height, width) // 4
+
+    cv2.circle(
+        img,
+        center,
+        radius,
+        (0, 255, 0),
+        3
+    )
+
+    small_img = cv2.resize(img, (400, 300))
+
+    cv2.imshow("Circle", small_img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+draw_circle()
